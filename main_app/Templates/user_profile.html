@@ -1,0 +1,48 @@
+
+
+{% extends 'base.html' %}
+
+{% block content %}
+    <style>
+        /* Embedded CSS for user_profile.html */
+        /* Add your styles to mimic Instagram's design */
+        body {
+            font-family: 'Arial', sans-serif;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .user-avatar {
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .user-posts {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .post-image {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Add more styles as needed */
+    </style>
+
+    <div class="user-info">
+        <img class="user-avatar" src="{% static 'images/default-avatar.jpg' %}" alt="User Avatar" width="50" height="50">
+        <h2>{{ user.username }}</h2>
+    </div>
+
+    <div class="user-posts">
+        {% for post in user_posts %}
+            <img class="post-image" src="{{ post.image.url }}" alt="{{ post.caption }}">
+        {% endfor %}
+    </div>
+{% endblock %}

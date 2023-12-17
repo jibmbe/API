@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Jibmbe{% endblock %}</title>
+
+    <!-- Font Awesome stylesheet link -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        /* Your additional styles go here */
+
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Add more styles as needed */
+
+        /* Navigation styles */
+        nav {
+            background-color: #333;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        nav a:hover {
+            background-color: #555;
+        }
+
+        /* Container for the main content */
+        .content-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Additional styles for the "Sign Up" box */
+        .signup-box {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+    </style>
+
+    {% block styles %}{% endblock %}
+</head>
+
+<body>
+    <!-- Navigation bar -->
+    <nav>
+        <a href="{% url 'signup' %}">Sign Up</a>
+    </nav>
+
+    <!-- Container for the main content -->
+    <div class="content-container">
+        <!-- "Sign Up" box -->
+        <div class="signup-box">
+            <!-- Your "Sign Up" content goes here -->
+            <!-- For example, a form or other elements -->
+            <h2>Sign Up</h2>
+            <!-- Add your Sign Up form or content here -->
+        </div>
+
+        <!-- "Create Post" link -->
+        <a href="{% url 'create_post' %}">Create Post</a>
+
+        <!-- Your main content goes here -->
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Your footer or other common elements can go here -->
+</body>
+
+</html>

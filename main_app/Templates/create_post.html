@@ -1,0 +1,57 @@
+<!-- main_app/templates/create_post.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}Create Post - Jibmbe{% endblock %}
+
+{% block content %}
+    <style>
+        /* Embedded CSS for create_post.html */
+        /* Add your styles to mimic Instagram's design */
+        body {
+            background-color: #fafafa;
+        }
+
+        .create-post-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .create-post-form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .create-post-form input,
+        .create-post-form textarea {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+
+        .create-post-form button {
+            background-color: #3897f0;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        /* Add more styles as needed */
+    </style>
+
+    <div class="create-post-container">
+        <h2>Create Post</h2>
+        <form class="create-post-form" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Post</button>
+        </form>
+    </div>
+{% endblock %}

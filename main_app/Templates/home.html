@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #fafafa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .instagram-wrapper {
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .post-container {
+            border-bottom: 1px solid #ddd;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .post-header img {
+            border-radius: 50%;
+            max-width: 40px;
+            max-height: 40px;
+            margin-right: 12px;
+        }
+
+        .post-images {
+            display: flex;
+            justify-content: center; /* Center the images */
+            align-items: center;
+            height: 300px; /* Set a fixed height for better visual consistency */
+        }
+
+        .post-image {
+            width: auto;
+            height: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+        }
+
+        .post-actions button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            color: #333;
+        }
+
+        .post-actions i {
+            font-size: 24px;
+            margin-right: 10px;
+        }
+
+        .like-comment-count {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .comment-form {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+        }
+
+        .comment-form textarea {
+            width: 100%;
+            padding: 8px;
+            margin-right: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: none;
+        }
+
+        .comment-form button {
+            background-color: #3897f0;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .comment-list {
+            padding: 12px;
+        }
+
+        .comment-list p {
+            margin: 8px 0;
+        }
+
+        .like-button {
+            color: #ed4956;
+        }
+
+        .comment-button {
+            color: #262626;
+        }
+
+        .post-header span {
+            font-weight: bold;
+            color: #262626;
+        }
+    </style>
+
+    <div class="instagram-wrapper">
+        {% for post in posts %}
+            <div class="post-container">
+                <div class="post-header">
+                    <img src="{{ post.user.profile_picture.url }}" alt="{{ post.user.username }}">
+                    <span>{{ post.user.username }}</span>
+                </div>
+                <div class="post-images">
+                    <img class="post-image" src="{{ post.image.url }}" alt="{{ post.caption }}">
+                </div>
+                <div class="post-actions">
+                    <div class="like-comment-count">
+                        <button onclick="likePost({{ post.id }})" class="like-button">
+                            <i class="fas fa-heart"></i> <span id="like-count-{{ post.id }}">{{ post.likes.count }}</span>
+                        </button>
+                    </div>
+                    <div>
+                        <button onclick="showComments({{ post.id }})" class="comment-button">
+                            <i class="fas fa-comment"></i> <span id="comment-count-{{ post.id }}">{{ post.comments.count }}</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="comments{{ post.id }}" style="display: none;" class="comment-list">
+                    <!-- Display comments dynamically here -->
+                    {% for comment in post.comments.all %}
+                        <p><strong>{{ comment.user.username }}</strong>: {{ comment.text }}</p>
+                    {% endfor %}
+                    <!-- Add a form to submit comments -->
+                    <form onsubmit="return addComment({{ post.id }})" class="comment-form">
+                        <textarea id="comment-input-{{ post.id }}" placeholder="Add a comment"></textarea>
+                        <button type="submit">Post</button>
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <script>
+        function likePost(postId) {
+            var likeCountElement = document.getElementById('like-count-' + postId);
+            var currentLikeCount = parseInt(likeCountElement.textContent);
+            likeCountElement.textContent = currentLikeCount + 1;
+
+            var url = '/like-post/' + postId + '/';
+            fetch(url, { method: 'POST' })
+                .then(response => response.json())
+                .then(data => console.log('Like successful:', data))
+                .catch(error => console.error('Error liking post:', error));
+        }
+
+        function showComments(postId) {
+            var commentsDiv = document.getElementById('comments' + postId);
+            commentsDiv.style.display = (commentsDiv.style.display === 'none' || !commentsDiv.style.display) ? 'block' : 'none';
+        }
+
+        function addComment(postId) {
+            var commentInput = document.getElementById('comment-input-' + postId);
+            var commentText = commentInput.value.trim();
+
+            if (commentText !== '') {
+                var commentsDiv = document.getElementById('comments' + postId);
+                var commentParagraph = document.createElement('p');
+                commentParagraph.innerHTML = '<strong>{{ user.username }}</strong>: ' + commentText;
+                commentsDiv.appendChild(commentParagraph);
+
+                var commentCountElement = document.getElementById('comment-count-' + postId);
+                var currentCommentCount = parseInt(commentCountElement.textContent);
+                commentCountElement.textContent = currentCommentCount + 1;
+
+                var url = '/add-comment/' + postId + '/';
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ text: commentText }),
+                })
+                    .then(response => response.json())
+                    .then(data => console.log('Comment added:', data))
+                    .catch(error => console.error('Error adding comment:', error));
+            }
+
+            return false;
+        }
+    </script>
+{% endblock %}
